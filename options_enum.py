@@ -6,7 +6,6 @@ class OptionDecision(Enum):
   RANDOM = 3
 
 class OptionAmount(Enum):
-  RANDOM_ZERO = -10 # 0-7
   RANDOM = -1 # 0-7
   NONE = 0
   ONE = 1
