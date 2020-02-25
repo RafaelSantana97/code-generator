@@ -15,3 +15,9 @@ class OptionAmount(Enum):
   FIVE = 5
   SIX = 6
   SEVEN = 7
+
+class OptionCondition(Enum):
+  OR = 1
+  AND = 2
+  BOTH = 3
+
