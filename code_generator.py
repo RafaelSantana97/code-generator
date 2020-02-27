@@ -126,12 +126,12 @@ class CodeGenerator:
     partial_code += "\n"+self.generate_if(nesting_level, OptionAmount.RANDOM)
 
     # Enquanto houver 'instrucoes' no código e a sorte ajudar. Gera todo um novo código dentro do escopo que está esperando as 'instrucoes'
+    old_expression = (nesting_level * rc.NESTING_SPACE) + 'instrucoes'
     if 'instrucoes' in partial_code and random.randrange(0, 2) == 0:
-      old_expression = (nesting_level * rc.NESTING_SPACE) + 'instrucoes'
       partial_code = partial_code.replace(old_expression, self.generate_code(nesting_level+1), 1)
     # Senão, insere lógica
     else:
-      partial_code = partial_code.replace("instrucoes", self.generate_instruction(nesting_level, OptionAmount.RANDOM))
+      partial_code = partial_code.replace(old_expression, self.generate_instruction(nesting_level+1, OptionAmount.RANDOM))
       
     return partial_code
 
