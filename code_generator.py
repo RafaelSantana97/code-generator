@@ -82,7 +82,8 @@ class CodeGenerator:
 
     qtd_var = str(len(self.var_list) -1)
 
-    regex_inst = rc.INSTRUCTION_1 + qtd_var +r']'
+    nesting = nesting_level * rc.NESTING_SPACE
+    regex_inst = r'(('+nesting + rc.INSTRUCTION_1 + qtd_var +r']'
     regex_inst += rc.INSTRUCTION_2 + qtd_var +r']'
     regex_inst += rc.INSTRUCTION_3 + qtd_var +r']'
     regex_inst += rc.INSTRUCTION_4 + varqtdr
@@ -90,6 +91,7 @@ class CodeGenerator:
     str_inst=rstr.xeger(regex_inst)
     
     list_varre = re.findall(r'variavel\d',str_inst)
+    
     
     for item in list_varre:
       indnomevar = int(item.replace("variavel","")) 
