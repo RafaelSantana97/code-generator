@@ -73,14 +73,45 @@ class CodeGenerator:
     return str_if
 
 
+  def generate_instruction(self, amountinst = OptionAmount.RANDOM) -> str: #amount é a qtd de instrucoesw                        
+    
+    regex_inst = ''
+
+    if amountinst == OptionAmount.RANDOM:
+       varqtdr = r'0,8}'
+    else:
+       varqtdr = str(amountinst)+r'}'
+
+
+    qtd_var = str(len(self.var_list) -1)
+
+    regex_inst = rc.INSTRUCTION_1 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_2 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_3 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_4 + varqtdr
+
+
+    str_inst=rstr.xeger(regex_inst)
+    
+    
+    list_varre = re.findall(r'variavel\d',str_inst)
+    
+    for item in list_varre:
+      indnomevar = int(item.replace("variavel","")) 
+      str_inst = str_inst.replace(item, self.var_list[indnomevar])
+
+ 
+    return str_inst
+
   def generate_code(self, nesting_level = 0) -> str:
     partial_code = self.generate_variable(nesting_level, OptionAmount.RANDOM, OptionDecision.RANDOM)
     partial_code += "\n"+self.generate_if(nesting_level, OptionAmount.RANDOM)
-
     if 'instrucoes' in partial_code and random.randrange(0, 2) == 0:
       old_expression = (nesting_level * rc.NESTING_SPACE) + 'instrucoes'
       partial_code = partial_code.replace(old_expression, self.generate_code(nesting_level+1), 1)
     else:
+      partial_code = partial_code.replace("instrucoes", self.generate_instruction(OptionAmount.RANDOM))
+      
       partial_code = partial_code.replace('instrucoes', rc.NESTING_SPACE + '// TODO')
 
     return partial_code
