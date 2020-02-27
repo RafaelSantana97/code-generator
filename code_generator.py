@@ -15,22 +15,31 @@ class CodeGenerator:
 
 
   def generate_variable(self, nesting_level, amount = OptionAmount.RANDOM, with_value = OptionDecision.RANDOM) -> str:
+    # Se a quantidade de variáveis é Zero, então retorna Vazio
     if amount == OptionAmount.NONE:
       return ''
-    
-    qtd = '{' + str(amount.value - 1) + '}' if amount.value in range(1,8) else r'{0,6}'
-    
-    var_attr = ''
+        
+    # Define se as variáveis geradas terão ou não um valor
+    has_var_attr = ''
     if with_value == OptionDecision.RANDOM:
-      var_attr = r'{0,1}'
+      has_var_attr = r'{0,1}'
     elif with_value == OptionDecision.YES:
-      var_attr = r'{1}'
+      # Todas terão atribuição de valor
+      has_var_attr = r'{1}'
     else:
-      var_attr = r'{0}'
+      # Nenhuma terá atribuição de valor
+      has_var_attr = r'{0}'
     
-    var = rc.VAR_NAME + rc.VALUE_ATTRIBUTION + var_attr
-    nvar = r'(' + var + r')(, ' + var + r')' + qtd
+    # Declaração de variável e possível atribuição de valor
+    complete_var_declaration = rc.VAR_NAME + rc.VALUE_ATTRIBUTION + has_var_attr
 
+    # Define a quantidade de variáveis que serão criadas
+    qtd_var = '{' + str(amount.value - 1) + '}' if amount.value in range(1,8) else r'{0,6}'
+
+    # Monta regex para geração de N variáveis, de acordo com parâmetros passados
+    nvar = r'(' + complete_var_declaration + r')(, ' + complete_var_declaration + r')' + qtd_var
+
+    # Gera definição de variável com identação referente a posição da variável no código
     var_code = (nesting_level * rc.NESTING_SPACE) + rstr.xeger(r'var ' + nvar + r';')
 
     self.var_list = re.findall(rc.VAR_NAME,var_code)
@@ -99,12 +108,16 @@ class CodeGenerator:
 
 
   def generate_code(self, nesting_level = 0) -> str:
+    # Gera variáveis
     partial_code = self.generate_variable(nesting_level, OptionAmount.RANDOM, OptionDecision.RANDOM)
+    # Gera estrutura de decisão
     partial_code += "\n"+self.generate_if(nesting_level, OptionAmount.RANDOM)
 
+    # Enquanto houver 'instrucoes' no código e a sorte ajudar. Gera todo um novo código dentro do escopo que está esperando as 'instrucoes'
     if 'instrucoes' in partial_code and random.randrange(0, 2) == 0:
       old_expression = (nesting_level * rc.NESTING_SPACE) + 'instrucoes'
       partial_code = partial_code.replace(old_expression, self.generate_code(nesting_level+1), 1)
+    # Senão, insere lógica
     else:
       partial_code = partial_code.replace("instrucoes", self.generate_instruction(nesting_level, OptionAmount.RANDOM))
       
