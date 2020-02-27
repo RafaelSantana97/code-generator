@@ -9,3 +9,4 @@ class RegexCode:
   IF_4 = r' (==|<>|>|<) variavel[0-'
   IF_5 = r' )'
   IF_6 = r'?{(\n)instrucoes (\n)}'
+  NESTING_SPACE = '  '

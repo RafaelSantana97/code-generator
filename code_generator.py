@@ -14,8 +14,7 @@ class CodeGenerator:
     print(self.generate_code())
 
 
-
-  def generate_variable(self, amount = OptionAmount.RANDOM, with_value = OptionDecision.RANDOM) -> str:
+  def generate_variable(self, nesting_level, amount = OptionAmount.RANDOM, with_value = OptionDecision.RANDOM) -> str:
     if amount == OptionAmount.NONE:
       return ''
     
@@ -32,15 +31,15 @@ class CodeGenerator:
     var = rc.VAR_NAME + rc.VALUE_ATTRIBUTION + var_attr
     nvar = r'(' + var + r')(, ' + var + r')' + qtd
 
-    var_code = rstr.xeger(r'var ' + nvar + r';')
+    var_code = (nesting_level * rc.NESTING_SPACE) + rstr.xeger(r'var ' + nvar + r';')
 
     self.var_list = re.findall(rc.VAR_NAME,var_code)
     self.var_list.pop(0)
 
     return var_code
 
-  def generate_if(self, amountcomp = OptionAmount.RANDOM) -> str: #amount é a qtd de comparacoes no if, definindo a qtd de variaveis
     
+  def generate_if(self, nesting_level, amountcomp = OptionAmount.RANDOM) -> str: #amount é a qtd de comparacoes no if, definindo a qtd de variaveis
     
     if amountcomp == OptionAmount.RANDOM:
       var_qtdr = r'{0,'+str(len(self.var_list))+r'}'
@@ -59,7 +58,11 @@ class CodeGenerator:
     if_5 = rc.IF_5 + var_qtdr
     if_6 = rc.IF_6 #poderá ser complementado com instruções
 
-    str_if=rstr.xeger(if_1+if_2+if_3+if_4+if_5+if_6)
+    nesting = nesting_level * rc.NESTING_SPACE
+    str_if = nesting + rstr.xeger(if_1+if_2+if_3+if_4+if_5+if_6)
+
+    str_if = str_if.replace('instrucoes', nesting + 'instrucoes')
+    str_if = str_if.replace('}', nesting + '}')
     
     list_varre = re.findall(r'variavel\d',str_if)
     
@@ -67,21 +70,19 @@ class CodeGenerator:
       indnomevar = int(item.replace("variavel","")) 
       str_if = str_if.replace(item, self.var_list[indnomevar])
 
-
-
     return str_if
 
-  def generate_code(self) -> str:
-    
 
+  def generate_code(self, nesting_level = 0) -> str:
+    partial_code = self.generate_variable(nesting_level, OptionAmount.RANDOM, OptionDecision.RANDOM)
+    partial_code += "\n"+self.generate_if(nesting_level, OptionAmount.RANDOM)
 
-    code_fim = ''
+    if 'instrucoes' in partial_code and random.randrange(0, 2) == 0:
+      old_expression = (nesting_level * rc.NESTING_SPACE) + 'instrucoes'
+      partial_code = partial_code.replace(old_expression, self.generate_code(nesting_level+1), 1)
+    else:
+      partial_code = partial_code.replace('instrucoes', rc.NESTING_SPACE + '// TODO')
 
-    code_fim+=self.generate_variable(OptionAmount.RANDOM, OptionDecision.RANDOM)
-    code_fim+="\n"+self.generate_if(OptionAmount.RANDOM)
-
-
-
-    return code_fim
+    return partial_code
 
 CodeGenerator()
