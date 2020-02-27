@@ -54,11 +54,12 @@ class CodeGenerator:
     else:
       var_qtdr = r'{'+str(amountcomp-1)+r'}'
 
-
+    #Calcula a qtd de variaveis para o regex criar a string variavelx com base no índice da variável
     qtd_var = str(len(self.var_list) -1)
     str_if = ''
     list_varre =[]
 
+    #Forma o Regex parametrizado para geração da string posteriormente
     if_1 = rc.IF_1 + qtd_var +r']'
     if_2 = rc.IF_2 + qtd_var+ r']'
     if_3 = rc.IF_3 + qtd_var+ r']'
@@ -66,6 +67,7 @@ class CodeGenerator:
     if_5 = rc.IF_5 + var_qtdr
     if_6 = rc.IF_6 #poderá ser complementado com instruções
 
+    #ajusta tabulacoes de acordo com o nível
     nesting = nesting_level * rc.NESTING_SPACE
     str_if = nesting + rstr.xeger(if_1+if_2+if_3+if_4+if_5+if_6)
 
@@ -74,6 +76,7 @@ class CodeGenerator:
     
     list_varre = re.findall(r'variavel\d',str_if)
     
+   #com base nas variaveis geradas pelo regex, substituimos pelo nome das variaveis existentes
     for item in list_varre:
       indnomevar = int(item.replace("variavel","")) 
       str_if = str_if.replace(item, self.var_list[indnomevar])
@@ -84,21 +87,28 @@ class CodeGenerator:
   def generate_instruction(self, nesting_level, amountinst = OptionAmount.RANDOM) -> str: #amount é a qtd de instrucoesw                        
     regex_inst = ''
 
+    #define a qtd de instrucoes a serem geradas
     if amountinst == OptionAmount.RANDOM:
       varqtdr = r'0,8}'
     else:
       varqtdr = str(amountinst)+r'}'
-
+    
     qtd_var = str(len(self.var_list) -1)
 
+    #ajusta tabulacoes e forma regex para geração da instrução
     nesting = nesting_level * rc.NESTING_SPACE
     regex_inst = r'(('+nesting + rc.INSTRUCTION_1 + qtd_var +r']'
     regex_inst += rc.INSTRUCTION_2 + qtd_var +r']'
     regex_inst += rc.INSTRUCTION_3 + qtd_var +r']'
-    regex_inst += rc.INSTRUCTION_4 + varqtdr
+    regex_inst += rc.INSTRUCTION_4 
+    regex_inst += r'('+nesting + rc.INSTRUCTION_5 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_6 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_7 + qtd_var +r']'
+    regex_inst += rc.INSTRUCTION_8 + varqtdr
 
     str_inst=rstr.xeger(regex_inst)
     
+    #agora irá sobrescrever as palavras variaveisx de acordo com as variaveis existentes
     list_varre = re.findall(r'variavel\d',str_inst)
     
     

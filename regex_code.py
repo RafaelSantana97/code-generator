@@ -14,6 +14,10 @@ class RegexCode:
   INSTRUCTION_1 = r'variavel[0-'
   INSTRUCTION_2 = r'= variavel[0-'
   INSTRUCTION_3 = r'( (\+|\-|\*|\\) variavel[0-'
-  INSTRUCTION_4 = r'){0,6})(\n)){'
+  INSTRUCTION_4 = r'){0,6}))((\n)'
+  INSTRUCTION_5 = r'variavel[0-'
+  INSTRUCTION_6 = r'= variavel[0-'
+  INSTRUCTION_7 = r'( (\+|\-|\*|\\) variavel[0-'
+  INSTRUCTION_8 = r'){0,6})){'
   
   NESTING_SPACE = '  '
