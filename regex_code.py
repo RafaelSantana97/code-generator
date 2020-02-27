@@ -9,3 +9,8 @@ class RegexCode:
   IF_4 = r' (==|<>|>|<) variavel[0-'
   IF_5 = r' )'
   IF_6 = r'?{(\n)instrucoes (\n)}'
+  INSTRUCTION_1 = r'((variavel[0-'
+  INSTRUCTION_2 = r'= variavel[0-'
+  INSTRUCTION_3 = r'( (\+|\-|\*|\\) variavel[0-'
+  INSTRUCTION_4 = r'){0,6})(\n)){'
+  
